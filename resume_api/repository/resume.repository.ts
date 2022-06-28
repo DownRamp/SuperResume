@@ -13,7 +13,7 @@ export class ResumeRepository {
     constructor() {
         this.db = connect();
         // For Development
-        this.db.sequelize.sync({ force: true }).then(() => {
+        this.db.sequelize.sync().then(() => {
             console.log("Drop and re-sync db.");
         });
         this.db.sequelize
@@ -48,7 +48,6 @@ export class ResumeRepository {
     async createResume(Resume) {
         let data = {};
         try {
-            console.log(Resume)
             data = await this.ResumeRespository.create(Resume);
         } catch(err) {
             this.logger.error('Error::' + err);
@@ -61,9 +60,11 @@ export class ResumeRepository {
         try {
             // ResumeData.updateddate = new Date().toISOString();
             data = await this.ResumeDataRespository.create(ResumeData);
+            await this.ResumeDataRespository.save();
         } catch(err) {
             this.logger.error('Error::' + err);
         }
+
         return data;
     }
 
