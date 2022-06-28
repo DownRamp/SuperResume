@@ -2,6 +2,7 @@ import { connect } from "../../resume_api/config/db.config";
 import { APILogger } from '../../resume_api/logger/api.logger';
 import { Resume } from "../model/resume.model";
 import { ResumeData } from "../model/resumedata.model";
+const { Op } = require("sequelize");
 
 export class ResumeRepository {
 
@@ -58,9 +59,7 @@ export class ResumeRepository {
     async addExp(ResumeData) {
         let data = {};
         try {
-            // ResumeData.updateddate = new Date().toISOString();
             data = await this.ResumeDataRespository.create(ResumeData);
-            await this.ResumeDataRespository.save();
         } catch(err) {
             this.logger.error('Error::' + err);
         }
@@ -69,12 +68,19 @@ export class ResumeRepository {
     }
 
     async search(ResumeDataArray) {
-        let data = {};
+        let data = {}
         try {
             // Build a list of resume ids and send back
             // if contains some or all of desired features
             // check data - names and descriptions
-            data = await this.ResumeDataRespository.findAll();
+            for (let rd of ResumeDataArray.values) {
+                let results: Array<any> = await this.ResumeDataRespository.findAll({
+                    where: {
+                        title:{[Op.substring]: rd.title}
+                    }
+                });           
+            }
+
         } catch(err) {
             this.logger.error('Error::' + err);
         }
