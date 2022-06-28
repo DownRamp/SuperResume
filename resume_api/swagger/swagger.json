@@ -13,7 +13,7 @@
         }
     },
     "schemes": ["http"],
-    "host": "localhost:3081",
+    "host": "localhost:5472",
     "basePath": "/api",
     "paths" : {
         "/resume/{id}" : {

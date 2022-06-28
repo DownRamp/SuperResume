@@ -1,12 +1,14 @@
-import { connect } from "../config/db.config";
-import { APILogger } from '../logger/api.logger';
+import { connect } from "../../resume_api/config/db.config";
+import { APILogger } from '../../resume_api/logger/api.logger';
 import { Resume } from "../model/resume.model";
+import { ResumeData } from "../model/resumedata.model";
 
 export class ResumeRepository {
 
     private logger: APILogger;
     private db: any = {};
     private ResumeRespository: any;
+    private ResumeDataRespository: any;
 
     constructor() {
         this.db = connect();
@@ -14,15 +16,29 @@ export class ResumeRepository {
         this.db.sequelize.sync({ force: true }).then(() => {
             console.log("Drop and re-sync db.");
         });
+        this.db.sequelize
+        .authenticate()
+        .then(() => {
+            console.log('Connection has been established successfully.');
+        })
+        .catch(err => {
+            console.error('Unable to connect to the database:', err);
+        });
         this.ResumeRespository = this.db.sequelize.getRepository(Resume);
+        this.ResumeDataRespository = this.db.sequelize.getRepository(ResumeData);
     }
 
     async getResume(id) {
 
         try {
-            const Resume = await this.ResumeRespository.findById(id);
-            console.log('Resume:::', Resume);
-            return Resume;
+            const Resume = await this.ResumeRespository.findByPk(id);
+            let data: Array<any> = await this.ResumeDataRespository.findAll({
+                where: {
+                  resume_id: id
+                }
+              });
+            console.log('Resume:::', Resume, data);
+            return {Resume, data};
         } catch (err) {
             console.log(err);
             return [];
@@ -32,7 +48,7 @@ export class ResumeRepository {
     async createResume(Resume) {
         let data = {};
         try {
-            Resume.createdate = new Date().toISOString();
+            console.log(Resume)
             data = await this.ResumeRespository.create(Resume);
         } catch(err) {
             this.logger.error('Error::' + err);
@@ -40,29 +56,24 @@ export class ResumeRepository {
         return data;
     }
 
-    async addExp(Resume) {
+    async addExp(ResumeData) {
         let data = {};
         try {
-            Resume.updateddate = new Date().toISOString();
-            data = await this.ResumeRespository.update({...Resume}, {
-                where: {
-                    id: Resume.id
-                }
-            });
+            // ResumeData.updateddate = new Date().toISOString();
+            data = await this.ResumeDataRespository.create(ResumeData);
         } catch(err) {
             this.logger.error('Error::' + err);
         }
         return data;
     }
 
-    async search(Resume) {
+    async search(ResumeDataArray) {
         let data = {};
         try {
-            data = await this.ResumeRespository.destroy({
-                where: {
-                    id: Resume
-                }
-            });
+            // Build a list of resume ids and send back
+            // if contains some or all of desired features
+            // check data - names and descriptions
+            data = await this.ResumeDataRespository.findAll();
         } catch(err) {
             this.logger.error('Error::' + err);
         }

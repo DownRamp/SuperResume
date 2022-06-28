@@ -1,6 +1,6 @@
 import * as http from "http";
 import App from "./app";
-import { APILogger } from "./logger/api.logger";
+import { APILogger } from "../resume_api/logger/api.logger";
 
 const port = process.env.PORT || 3070;
 

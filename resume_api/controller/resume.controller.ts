@@ -26,8 +26,8 @@ export class ResumeController {
         return await this.resumeService.search(resume);
     }
 
-    async addExp(resume) {
-        this.logger.info('Controller: add experience', resume);
-        return await this.resumeService.addExp(resume);
+    async addExp(resumeData) {
+        this.logger.info('Controller: add experience', resumeData);
+        return await this.resumeService.addExp(resumeData);
     }
 }

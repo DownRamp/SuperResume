@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript'
 import { Resume } from '../model/resume.model';
+import { ResumeData } from '../model/resumedata.model';
 
 export const connect = () => {
 
@@ -26,7 +27,7 @@ export const connect = () => {
         }
     });
 
-    sequelize.addModels([Resume]);
+    sequelize.addModels([Resume, ResumeData]);
 
     const db: any = {};
     db.Sequelize = Sequelize;

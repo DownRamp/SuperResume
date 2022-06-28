@@ -48,7 +48,7 @@ class App {
 
         this.express.post('/api/resume', async (req, res) => {
             console.log(req.body);
-            await this.resumeController.createResume(req.body.create).then(data => res.json(data));
+            await this.resumeController.createResume(req.body.resume).then(data => res.json(data));
         });
 
         this.express.post('/api/resume/exp', async (req, res) => {
