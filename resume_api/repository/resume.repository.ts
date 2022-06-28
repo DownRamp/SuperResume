@@ -68,7 +68,7 @@ export class ResumeRepository {
     }
 
     async search(ResumeDataArray) {
-        let data = {}
+        let data: Set<string> = new Set<string>();
         try {
             // Build a list of resume ids and send back
             // if contains some or all of desired features
@@ -78,7 +78,12 @@ export class ResumeRepository {
                     where: {
                         title:{[Op.substring]: rd.title}
                     }
-                });           
+
+                }); 
+                
+                for(let r of results){
+                    data.add(r.id);
+                }
             }
 
         } catch(err) {
